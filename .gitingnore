@@ -1,0 +1,9 @@
+# Python
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Docker
+*.log

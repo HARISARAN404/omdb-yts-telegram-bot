@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  checker:
+    build:
+      context: .
+      dockerfile: Dockerfile.checker
+    container_name: yts_checker
+    ports:
+      - "8000:8000"
+    environment:
+      - FLASK_ENV=production
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    container_name: telegram_omdb_bot
+    depends_on:
+      - checker
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OMDB_API_KEY=${OMDB_API_KEY}
+      - YTS_CHECKER_URL=http://checker:8000
