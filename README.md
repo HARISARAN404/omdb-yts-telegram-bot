@@ -1,8 +1,12 @@
-🎬 OMDB + YTS Telegram Bot
+
+# 🎬 OMDB + YTS Telegram Bot
 
 A powerful movie search Telegram bot that fetches movie details from OMDB API and returns YTS magnet links instantly — clean, fast, and dockerized for easy deployment.
 
-✨ Features
+
+
+
+## ✨ Features
 
 🔍 Search any movie by name
 
@@ -18,58 +22,51 @@ A powerful movie search Telegram bot that fetches movie details from OMDB API an
 
 📦 Clean, modular code structure
 
-🔧 Setup & Installation
+
+## 🔧 Setup & Installation
+
 1️⃣ Clone the Repository
+
+```bash
 git clone https://github.com/HARISARAN404/omdb-yts-telegram-bot.git
 cd omdb-yts-telegram-bot
 
+```
 2️⃣ Create .env File
-
-(Add your keys securely)
-
+```bash
 BOT_TOKEN=your_telegram_bot_token
 OMDB_API_KEY=your_omdb_api_key
 
+```
 3️⃣ Install Requirements
+```bash
 pip install -r requirements.txt
-
+```
 4️⃣ Run the Bot
+```bash
 python bot/bot.py
 
-🐳 Docker Deployment
+```
+
+## 🐳 Docker Deployment
+
 Build Image
+```bash
 docker build -t omdb-yts-bot .
 
+```
 Run Container
+```bash
 docker run --env-file .env omdb-yts-bot
 
+```
 Using Docker Compose
+```bash
 docker compose up --build
 
-🎯 Commands (Telegram)
-Command	Description
-/start	Welcome & Help
-/search <movie>	Search movie + magnet links
-/about	Bot information
-🔗 APIs Used
+```
+## 🔗 APIs Used
 
 🎥 OMDB API — Movie metadata
 
 💚 YTS.mx — Torrent search (scraped)
-
-🎥 Preview
-
-Add screenshot or GIF here (optional)
-
-[Insert bot chat preview image]
-
-👨‍💻 Author
-
-Harisaran V
-🔗 GitHub: https://github.com/HARISARAN404
-
-📧 Email: harisaran.official@gmail.com
-
-📜 License
-
-MIT License – feel free to use and modify!
