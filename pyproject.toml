@@ -1,0 +1,19 @@
+[project]
+name = "omdb-yts-telegram-bot"
+version = "2.0.0"
+description = "Telegram Bot + YTS Checker Microservices (Dockerized)"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.isort]
+known-local-folder = ["config", "omdb_client", "checker_client", "utils", "yts_checker_service"]
+
+[tool.pytest.ini_options]
+pythonpath = ["bot", "checker"]
+testpaths = ["tests"]

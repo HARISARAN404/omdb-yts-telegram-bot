@@ -1,23 +1,21 @@
-version: "3.9"
 services:
   checker:
-    build:
-      context: .
-      dockerfile: Dockerfile.checker
+    build: ./checker
     container_name: yts_checker
+    restart: unless-stopped
+    # Only the bot needs the checker; publish it to localhost for debugging.
     ports:
-      - "8000:8000"
-    environment:
-      - FLASK_ENV=production
+      - "127.0.0.1:8000:8000"
 
   bot:
-    build:
-      context: .
-      dockerfile: Dockerfile.bot
+    build: ./bot
     container_name: telegram_omdb_bot
+    restart: unless-stopped
     depends_on:
-      - checker
+      checker:
+        condition: service_healthy
     environment:
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - OMDB_API_KEY=${OMDB_API_KEY}
-      - YTS_CHECKER_URL=http://checker:8000
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      OMDB_API_KEY: ${OMDB_API_KEY}
+      MAX_RESULTS: ${MAX_RESULTS:-8}
+      YTS_CHECKER_URL: http://checker:8000
