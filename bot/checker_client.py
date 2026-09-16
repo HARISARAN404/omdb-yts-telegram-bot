@@ -1,22 +1,26 @@
-# checker_client.py
+"""Async client for the YTS checker service."""
+
 import logging
-import requests
-from typing import Optional, Dict
+from typing import Any
+
+import httpx
+
 from config import cfg
 
 logger = logging.getLogger("checker_client")
 
 
-def post_to_checker(payload: Dict, endpoint: Optional[str] = None, timeout: int = 20) -> Optional[Dict]:
+async def post_to_checker(
+    client: httpx.AsyncClient, payload: dict[str, Any], timeout: float = 20
+) -> dict[str, Any] | None:
     """
     Post the payload to the checker service and return parsed JSON or None.
     Payload format expected: {"items": [{"imdbID": "...", "title": "...", "year": "..."} ...]}
     """
-    url = endpoint or cfg.checker_endpoint()
     try:
-        r = requests.post(url, json=payload, timeout=timeout)
+        r = await client.post(cfg.checker_endpoint(), json=payload, timeout=timeout)
         r.raise_for_status()
         return r.json()
-    except Exception:
+    except (httpx.HTTPError, ValueError):
         logger.exception("post_to_checker failed")
         return None

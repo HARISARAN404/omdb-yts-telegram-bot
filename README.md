@@ -1,27 +1,42 @@
 
 # 🎬 OMDB + YTS Telegram Bot
 
-A powerful movie search Telegram bot that fetches movie details from OMDB API and returns YTS magnet links instantly — clean, fast, and dockerized for easy deployment.
-
-
-
+A movie search Telegram bot that fetches movie details from the OMDb API and returns YTS torrent links — clean, fast, and dockerized for easy deployment.
 
 ## ✨ Features
 
 🔍 Search any movie by name
 
-🎞 Fetch detailed movie info (Poster, Plot, Cast, Genre, Rating, Runtime etc.)
+🎞 Movie details (Poster, Title, Year, Plot)
 
-🧲 Get YTS Magnet Links (720p / 1080p / 2160p depending on availability)
+🧲 YTS torrent links per variant (720p / 1080p / 2160p, source, codec, size — depending on availability)
 
-🚀 Fast Telegram Bot Response (Async powered)
+🚀 Fully async bot with a pooled HTTP client
 
-🐳 Docker Support — run anywhere
+🐳 Two small services (bot + checker) wired together with Docker Compose
 
-🔑 Secure API Keys via .env file
+🔑 Secrets via `.env` file
 
-📦 Clean, modular code structure
+## 🧱 Project Structure
 
+```
+.
+├── bot/                       # Telegram bot service
+│   ├── bot.py                 # handlers & app entrypoint
+│   ├── config.py              # env configuration
+│   ├── omdb_client.py         # OMDb API client
+│   ├── checker_client.py      # client for the checker service
+│   ├── utils.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── checker/                   # YTS checker microservice (Flask + gunicorn)
+│   ├── yts_checker_service.py # POST /check, GET /health
+│   ├── requirements.txt
+│   └── Dockerfile
+├── tests/
+├── docker-compose.yml
+└── .env.example
+```
 
 ## 🔧 Setup & Installation
 
@@ -30,43 +45,60 @@ A powerful movie search Telegram bot that fetches movie details from OMDB API an
 ```bash
 git clone https://github.com/HARISARAN404/omdb-yts-telegram-bot.git
 cd omdb-yts-telegram-bot
-
 ```
-2️⃣ Create .env File
+
+2️⃣ Create `.env` File
+
 ```bash
-BOT_TOKEN=your_telegram_bot_token
+cp .env.example .env
+```
+
+```env
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 OMDB_API_KEY=your_omdb_api_key
+```
 
-```
-3️⃣ Install Requirements
+| Variable | Required | Default | Used by |
+|---|---|---|---|
+| `TELEGRAM_BOT_TOKEN` | ✅ | — | bot |
+| `OMDB_API_KEY` | ✅ | — | bot |
+| `YTS_CHECKER_URL` | | `http://127.0.0.1:8000` | bot |
+| `MAX_RESULTS` | | `8` | bot |
+| `YTS_SITE_BASES` | | `https://www.yts-official.cc/movies` | checker (comma-separated) |
+| `REQUEST_TIMEOUT` / `MAX_WORKERS` | | `8` / `8` | checker |
+
+## 🐳 Docker Deployment (recommended)
+
 ```bash
-pip install -r requirements.txt
+docker compose up --build -d
 ```
-4️⃣ Run the Bot
+
+The bot starts once the checker's health check passes. Logs: `docker compose logs -f bot`.
+
+## 🐍 Run Locally (without Docker)
+
 ```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+
+# terminal 1 — checker
+python checker/yts_checker_service.py
+
+# terminal 2 — bot
 python bot/bot.py
-
 ```
 
-## 🐳 Docker Deployment
+## 🧪 Development
 
-Build Image
 ```bash
-docker build -t omdb-yts-bot .
-
+ruff check . && ruff format --check .
+pytest
 ```
-Run Container
-```bash
-docker run --env-file .env omdb-yts-bot
 
-```
-Using Docker Compose
-```bash
-docker compose up --build
+CI runs lint, tests, and a Docker build on every push and pull request.
 
-```
 ## 🔗 APIs Used
 
-🎥 OMDB API — Movie metadata
+🎥 OMDb API — Movie metadata
 
-💚 YTS.mx — Torrent search (scraped)
+💚 YTS — Torrent links (scraped)
